@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { NAV } from "@/lib/site";
+import { AuthLink } from "./AuthLink";
 import { ButtonLink } from "./ButtonLink";
+
+const PUBLIC_NAV = NAV.filter((item) => item.href !== "/entrar");
 
 export function Header() {
   return (
@@ -11,11 +14,12 @@ export function Header() {
         </Link>
 
         <nav aria-label="Principal" className="hidden items-center gap-7 text-[0.95rem] md:flex">
-          {NAV.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:underline underline-offset-4">
+          {PUBLIC_NAV.map((item) => (
+            <Link key={item.href} href={item.href} className="underline-offset-4 hover:underline">
               {item.label}
             </Link>
           ))}
+          <AuthLink className="underline-offset-4 hover:underline" />
         </nav>
 
         <div className="flex items-center gap-3">
@@ -32,11 +36,12 @@ export function Header() {
               aria-label="Principal"
               className="absolute right-0 mt-2 flex w-60 flex-col rounded-2xl border border-ink/10 bg-paper p-2 shadow-lg"
             >
-              {NAV.map((item) => (
+              {PUBLIC_NAV.map((item) => (
                 <Link key={item.href} href={item.href} className="rounded-xl px-4 py-3 hover:bg-sand">
                   {item.label}
                 </Link>
               ))}
+              <AuthLink className="rounded-xl px-4 py-3 hover:bg-sand" />
               <Link href="/esta-semana" className="mt-1 rounded-xl bg-clay px-4 py-3 text-white">
                 Experimentar grátis
               </Link>

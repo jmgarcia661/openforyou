@@ -10,7 +10,7 @@ Este repositório contém as **Fases 0 e 1**: sistema visual, homepage, páginas
 |---|---|
 | 0. Repositório, tooling, CI, base de dados | feito |
 | 1. Homepage, "Esta semana", newsletter | feito |
-| 2. Registo e login | por fazer (`/entrar` é um marcador) |
+| 2. Registo, login, conta, RGPD básico | feito (precisa de configuração, ver abaixo) |
 | 3. Stripe (39 € → 59 €) | por fazer |
 | 4–8. Biblioteca, calendário, Zoom, comunidade, eBook, admin | por fazer |
 
@@ -46,6 +46,18 @@ values ('<UUID-DO-TEU-UTILIZADOR>', 'admin');
 1. Storage > bucket `media`: carrega o vídeo/áudio. Bucket `covers`: carrega a capa.
 2. Table Editor > `content_items`: cria o conteúdo (`media_path` = caminho no bucket, `status` = `published`).
 3. Table Editor > `weekly_free`: cria uma linha com `starts_on`, `ends_on` e os três IDs. Podes agendar semanas futuras. Quando o período acaba, os conteúdos deixam de ser públicos e ficam só para membros.
+
+## Fase 2: ativar o registo e o login
+
+O código está pronto, mas só funciona depois de ligares o Supabase. Sem isto, as páginas `/registo` e `/entrar` mostram "ainda não está disponível".
+
+1. **Base de dados:** no SQL Editor do Supabase, corre `0001_init.sql` (se ainda não correste) e depois `0002_auth.sql`.
+2. **Endereços permitidos:** Authentication > URL Configuration. Em *Site URL* coloca o endereço do site (por exemplo `https://openforyou.vercel.app`). Em *Redirect URLs* adiciona `https://openforyou.vercel.app/**` e `http://localhost:3000/**`. Quando ligares o teu domínio, acrescenta-o também.
+3. **Email:** Authentication > Sign In / Providers > Email: mantém *Confirm email* ligado e define o comprimento mínimo da palavra-passe em 10.
+4. **Variáveis na Vercel:** Settings > Environment Variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. Depois faz *Redeploy* (as variáveis `NEXT_PUBLIC_` só entram no site quando é construído).
+5. **Antes do lançamento:** o serviço de email por omissão do Supabase é limitado e pensado para testes. Configura um SMTP próprio (Resend) em Authentication > SMTP Settings e traduz os modelos de email para português.
+
+Não há ainda login com Google, captcha nem limite de pedidos próprio (o Supabase aplica limites base). Ficam para a fase de segurança.
 
 ## Preços
 
