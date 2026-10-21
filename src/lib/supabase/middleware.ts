@@ -1,5 +1,7 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+
+type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 /** Renova a sessão e protege as páginas de /conta. */
 export async function updateSession(request: NextRequest) {
@@ -14,10 +16,10 @@ export async function updateSession(request: NextRequest) {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(list) {
-        list.forEach(({ name, value }) => request.cookies.set(name, value));
+      setAll(list: CookieToSet[]) {
+        list.forEach(({ name, value }: CookieToSet) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
-        list.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        list.forEach(({ name, value, options }: CookieToSet) => response.cookies.set(name, value, options));
       },
     },
   });
