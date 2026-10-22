@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getStripe } from "@/lib/stripe";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { getServerClient } from "@/lib/supabase/server";
 
@@ -25,7 +26,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Confirmação em falta." }, { status: 400 });
   }
 
-  // TODO (Fase 3): cancelar a subscrição Stripe antes de eliminar.
+  // Cancelar primeiro a subscrição no Stripe, para nunca cobrar uma conta que já não existe.
+  const stripe = getStripe();
+  if (stripe) {
+    const { data: subs } = await admin
+      .from("subscriptions")
+      .select("stripe_subscription_id, status")
+      .eq("user_id", user.id);
+    for (const s of subs ?? []) {
+      if (["canceled", "incomplete_expired"].includes(s.status)) continue;
+      try {
+        await stripe.subscriptions.cancel(s.stripe_subscription_id);
+      } catch (e) {
+        if ((e as { code?: string }).code === "resource_missing") continue;
+        console.error("cancel subscription failed", s.stripe_subscription_id);
+        return NextResponse.json({ error: "Não foi possível cancelar a subscrição." }, { status: 500 });
+      }
+    }
+  }
+
   const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) {
     console.error("delete user failed", error.message);

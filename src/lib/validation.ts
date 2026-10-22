@@ -69,3 +69,8 @@ export const profileSchema = z.object({
   name: nameField,
   timezone: z.string().min(1, "Escolhe um fuso horário.").max(64),
 });
+
+export const checkoutSchema = z.object({
+  terms: z.literal(true),
+  immediate: z.literal(true),
+});

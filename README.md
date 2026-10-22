@@ -11,7 +11,7 @@ Este repositório contém as **Fases 0 e 1**: sistema visual, homepage, páginas
 | 0. Repositório, tooling, CI, base de dados | feito |
 | 1. Homepage, "Esta semana", newsletter | feito |
 | 2. Registo, login, conta, RGPD básico | feito (precisa de configuração, ver abaixo) |
-| 3. Stripe (39 € → 59 €) | por fazer |
+| 3. Stripe (39 € → 59 €) | feito (precisa de configuração, ver abaixo) |
 | 4–8. Biblioteca, calendário, Zoom, comunidade, eBook, admin | por fazer |
 
 O código ainda **não foi executado**: corre `npm install` e `npm run build` e envia-me qualquer erro.
@@ -58,6 +58,26 @@ O código está pronto, mas só funciona depois de ligares o Supabase. Sem isto,
 5. **Antes do lançamento:** o serviço de email por omissão do Supabase é limitado e pensado para testes. Configura um SMTP próprio (Resend) em Authentication > SMTP Settings e traduz os modelos de email para português.
 
 Não há ainda login com Google, captcha nem limite de pedidos próprio (o Supabase aplica limites base). Ficam para a fase de segurança.
+
+## Fase 3: ativar os pagamentos (Stripe)
+
+Faz tudo primeiro em **modo de teste** (interruptor "Test mode" no Stripe). Só passas a modo real no fim.
+
+1. **Produto e preço:** Product catalog > Add product. Nome "Open For You, acesso completo". Preço recorrente de 59 EUR, mensal. Copia o ID do preço (`price_...`).
+2. **Cupão:** Product catalog > Coupons > New. Tipo "Amount off" de 20 EUR, duração **Once**. Copia o ID do cupão.
+3. **Chaves:** Developers > API keys. Copia a *Secret key* de teste (`sk_test_...`).
+4. **Área do cliente:** Settings > Billing > Customer portal. Ativa o cancelamento, a atualização do método de pagamento e a lista de faturas, e guarda.
+5. **Webhook:** Developers > Webhooks > Add endpoint. Endereço: `https://openforyou.vercel.app/api/stripe/webhook`. Eventos: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`, `charge.refunded`. Depois de criar, copia o *Signing secret* (`whsec_...`).
+6. **Variáveis na Vercel** (as de chave são do tipo Secret): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`, `STRIPE_FIRST_MONTH_COUPON_ID`. Opcional: `STRIPE_AUTOMATIC_TAX=true` quando o Stripe Tax estiver configurado. Depois faz *Redeploy*.
+7. **Teste:** em `/subscrever`, paga com o cartão de teste `4242 4242 4242 4242`, qualquer data futura e qualquer CVC.
+
+O site recusa-se a abrir o pagamento se o preço e o cupão do Stripe não derem exatamente os valores guardados na tabela `settings` (59 €, 39 €), para nunca mostrar um preço e cobrar outro.
+
+**Pontos que precisam de decisão tua:**
+- **IVA:** o preço de 59 € deve ser com IVA incluído? Define-o no preço do Stripe (`tax_behavior`) e confirma com o teu contabilista.
+- **Texto legal do checkout:** a caixa sobre o direito de livre resolução de 14 dias deve ser revista por um jurista.
+- **Pagamento falhado:** com a regra atual, o acesso fica suspenso quando o Stripe marca a subscrição como `past_due`. Se quiseres um período de tolerância, diz-me.
+- **Reembolsos:** ficam registados em `audit_log`. O acesso só termina se cancelares a subscrição.
 
 ## Preços
 

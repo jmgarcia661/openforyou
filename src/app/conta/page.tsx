@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ButtonLink } from "@/components/ButtonLink";
+import { ManageSubscription } from "@/components/ManageSubscription";
 import { DeleteAccount } from "@/components/auth/DeleteAccount";
 import { NewPasswordForm } from "@/components/auth/NewPasswordForm";
 import { ProfileForm } from "@/components/auth/ProfileForm";
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { formatDatePt } from "@/lib/subscription";
 import { getServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "A minha conta" };
@@ -32,6 +34,15 @@ export default async function ContaPage() {
     .eq("id", user.id)
     .maybeSingle();
 
+  const { data: active } = await supabase.rpc("has_active_subscription");
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("status, current_period_end, cancel_at_period_end")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   return (
     <div className="wrap max-w-2xl py-14 md:py-20">
       <h1 className="text-4xl md:text-5xl">A minha conta</h1>
@@ -40,10 +51,38 @@ export default async function ContaPage() {
         <h2 id="sub-title" className="text-2xl">
           Subscrição
         </h2>
-        <p className="mt-2 text-ink-soft">Ainda não tens acesso completo.</p>
-        <ButtonLink href="/acesso-completo" variant="secondary" className="mt-4">
-          Ver o acesso completo
-        </ButtonLink>
+        {active && sub ? (
+          <>
+            <p className="mt-2 text-ink-soft">
+              Acesso completo ativo.{" "}
+              {sub.cancel_at_period_end && sub.current_period_end
+                ? `A subscrição termina a ${formatDatePt(sub.current_period_end)}. Manténs o acesso até lá.`
+                : sub.current_period_end
+                  ? `Próxima renovação a ${formatDatePt(sub.current_period_end)}.`
+                  : ""}
+            </p>
+            <div className="mt-4">
+              <ManageSubscription label="Gerir subscrição e faturas" />
+            </div>
+          </>
+        ) : sub ? (
+          <>
+            <p className="mt-2 text-ink-soft">
+              A tua subscrição não está ativa. Podes atualizar o pagamento ou voltar a subscrever.
+            </p>
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <ButtonLink href="/subscrever">Voltar a subscrever</ButtonLink>
+              <ManageSubscription label="Ver faturas e pagamento" />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-ink-soft">Ainda não tens acesso completo.</p>
+            <ButtonLink href="/acesso-completo" variant="secondary" className="mt-4">
+              Ver o acesso completo
+            </ButtonLink>
+          </>
+        )}
       </section>
 
       <section aria-labelledby="profile-title" className="mt-12 border-t border-ink/15 pt-10">
@@ -70,7 +109,6 @@ export default async function ContaPage() {
           Os teus dados
         </h2>
         <p className="mt-2 text-ink-soft">Descarrega uma cópia dos dados que guardamos sobre ti.</p>
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/api/conta/exportar"
           className="mt-4 inline-flex h-12 items-center rounded-full border border-ink/30 px-6 font-medium transition-colors hover:border-ink hover:bg-ink/5"

@@ -29,7 +29,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname, search } = request.nextUrl;
-  if (!user && pathname.startsWith("/conta")) {
+  const protectedPaths = ["/conta", "/subscrever", "/bem-vindo"];
+  if (!user && protectedPaths.some((path) => pathname.startsWith(path))) {
     const redirect = request.nextUrl.clone();
     redirect.pathname = "/entrar";
     redirect.search = `?next=${encodeURIComponent(pathname + search)}`;

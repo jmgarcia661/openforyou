@@ -6,4 +6,13 @@ export async function middleware(request: NextRequest) {
 }
 
 // Só corre onde é preciso, para as páginas públicas continuarem estáticas e rápidas.
-export const config = { matcher: ["/conta/:path*", "/api/conta/:path*"] };
+export const config = {
+  matcher: [
+    "/conta/:path*",
+    "/api/conta/:path*",
+    "/subscrever",
+    "/bem-vindo",
+    "/api/stripe/checkout",
+    "/api/stripe/portal",
+  ],
+};

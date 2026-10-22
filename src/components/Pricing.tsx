@@ -39,7 +39,7 @@ export function Pricing({ prices }: { prices: Prices }) {
         </div>
 
         <div className="mt-8">
-          <ButtonLink href="/entrar" className="bg-paper !text-ink hover:!bg-sand">
+          <ButtonLink href="/subscrever" className="bg-paper !text-ink hover:!bg-sand">
             Começar o primeiro mês
           </ButtonLink>
           <p className="mt-3 text-sm text-paper/80">
