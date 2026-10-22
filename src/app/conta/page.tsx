@@ -109,6 +109,7 @@ export default async function ContaPage() {
           Os teus dados
         </h2>
         <p className="mt-2 text-ink-soft">Descarrega uma cópia dos dados que guardamos sobre ti.</p>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/api/conta/exportar"
           className="mt-4 inline-flex h-12 items-center rounded-full border border-ink/30 px-6 font-medium transition-colors hover:border-ink hover:bg-ink/5"
