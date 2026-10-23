@@ -35,6 +35,7 @@ export default async function ContaPage() {
     .maybeSingle();
 
   const { data: active } = await supabase.rpc("has_active_subscription");
+  const { data: isAdmin } = await supabase.rpc("is_admin");
   const { data: sub } = await supabase
     .from("subscriptions")
     .select("status, current_period_end, cancel_at_period_end")
@@ -51,7 +52,14 @@ export default async function ContaPage() {
         <h2 id="sub-title" className="text-2xl">
           Subscrição
         </h2>
-        {active && sub ? (
+        {isAdmin && !active ? (
+          <>
+            <p className="mt-2 text-ink-soft">Tens acesso de administrador a todos os conteúdos.</p>
+            <ButtonLink href="/admin" className="mt-4">
+              Abrir a administração
+            </ButtonLink>
+          </>
+        ) : active && sub ? (
           <>
             <p className="mt-2 text-ink-soft">
               Acesso completo ativo.{" "}

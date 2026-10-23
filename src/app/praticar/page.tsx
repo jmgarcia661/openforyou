@@ -22,6 +22,7 @@ export default async function PraticarPage({ searchParams }: Props) {
 
   const { tipo } = await searchParams;
   const { data: member } = await supabase.rpc("has_active_subscription");
+  const { data: isAdmin } = await supabase.rpc("is_admin");
 
   let items: ContentRow[] = [];
   if (tipo === "favoritos") {
@@ -56,7 +57,7 @@ export default async function PraticarPage({ searchParams }: Props) {
     <div className="wrap py-12 md:py-16">
       <h1 className="text-5xl md:text-6xl">Praticar</h1>
 
-      {!member && (
+      {!member && !isAdmin && (
         <div className="mt-6 flex flex-col gap-4 rounded-3xl bg-sand p-6 md:flex-row md:items-center md:justify-between">
           <p className="max-w-xl">
             Estás a ver os conteúdos gratuitos. Com o acesso completo tens toda a biblioteca, as aulas em direto e a comunidade.

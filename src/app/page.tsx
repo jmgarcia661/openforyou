@@ -2,6 +2,7 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { Photo } from "@/components/Photo";
 import { Pricing } from "@/components/Pricing";
+import { HideForMembers } from "@/components/ViewerGate";
 import { WeeklyCards } from "@/components/WeeklyCards";
 import { formatEUR, getPrices } from "@/lib/pricing";
 import { SITE } from "@/lib/site";
@@ -76,9 +77,11 @@ export default async function HomePage() {
       </section>
 
       {/* 4.4 Acesso completo */}
-      <section aria-label="Acesso completo" className="wrap">
-        <Pricing prices={prices} />
-      </section>
+      <HideForMembers>
+        <section aria-label="Acesso completo" className="wrap">
+          <Pricing prices={prices} />
+        </section>
+      </HideForMembers>
 
       {/* 4.5 Comunidade */}
       <section aria-labelledby="community-title" className="wrap grid gap-10 py-20 md:grid-cols-2 md:py-28">
@@ -183,9 +186,11 @@ export default async function HomePage() {
         </h2>
         <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
           <ButtonLink href="/esta-semana">Experimentar gratuitamente</ButtonLink>
-          <ButtonLink href="/acesso-completo" variant="secondary">
-            Ter acesso completo
-          </ButtonLink>
+          <HideForMembers>
+            <ButtonLink href="/acesso-completo" variant="secondary">
+              Ter acesso completo
+            </ButtonLink>
+          </HideForMembers>
         </div>
       </section>
     </>

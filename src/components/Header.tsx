@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { NAV } from "@/lib/site";
-import { AuthLink } from "./AuthLink";
 import { ButtonLink } from "./ButtonLink";
-
-const PUBLIC_NAV = NAV.filter((item) => item.href !== "/entrar");
+import { NavLinks } from "./NavLinks";
+import { HideForMembers } from "./ViewerGate";
 
 export function Header() {
   return (
@@ -14,18 +12,15 @@ export function Header() {
         </Link>
 
         <nav aria-label="Principal" className="hidden items-center gap-7 text-[0.95rem] md:flex">
-          {PUBLIC_NAV.map((item) => (
-            <Link key={item.href} href={item.href} className="underline-offset-4 hover:underline">
-              {item.label}
-            </Link>
-          ))}
-          <AuthLink className="underline-offset-4 hover:underline" />
+          <NavLinks variant="desktop" />
         </nav>
 
         <div className="flex items-center gap-3">
-          <ButtonLink href="/esta-semana" size="sm" className="hidden sm:inline-flex">
-            Experimentar grátis
-          </ButtonLink>
+          <HideForMembers>
+            <ButtonLink href="/esta-semana" size="sm" className="hidden sm:inline-flex">
+              Experimentar grátis
+            </ButtonLink>
+          </HideForMembers>
 
           {/* Menu móvel sem JavaScript: elemento <details> nativo */}
           <details className="relative md:hidden">
@@ -34,17 +29,14 @@ export function Header() {
             </summary>
             <nav
               aria-label="Principal"
-              className="absolute right-0 mt-2 flex w-60 flex-col rounded-2xl border border-ink/10 bg-paper p-2 shadow-lg"
+              className="absolute right-0 mt-2 flex w-60 flex-col gap-1 rounded-2xl border border-ink/10 bg-paper p-2 shadow-lg"
             >
-              {PUBLIC_NAV.map((item) => (
-                <Link key={item.href} href={item.href} className="rounded-xl px-4 py-3 hover:bg-sand">
-                  {item.label}
+              <NavLinks variant="mobile" />
+              <HideForMembers>
+                <Link href="/esta-semana" className="mt-1 block rounded-xl bg-clay px-4 py-3 text-white">
+                  Experimentar grátis
                 </Link>
-              ))}
-              <AuthLink className="rounded-xl px-4 py-3 hover:bg-sand" />
-              <Link href="/esta-semana" className="mt-1 rounded-xl bg-clay px-4 py-3 text-white">
-                Experimentar grátis
-              </Link>
+              </HideForMembers>
             </nav>
           </details>
         </div>
