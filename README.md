@@ -16,7 +16,8 @@ Este repositório contém as **Fases 0 e 1**: sistema visual, homepage, páginas
 | 5. Calendário, aulas em direto, sala de espera em tempo real | feito (Zoom com links colados à mão) |
 | 5b. Criar reuniões Zoom automaticamente pela API | por fazer |
 | 6. Comunidade privada e moderada | feito (precisa da migração 0005) |
-| 7–8. eBook, newsletter, lançamento | por fazer |
+| 7. Venda do eBook | feito (precisa da migração 0006) |
+| 8. Newsletter, emails, textos legais, lançamento | por fazer |
 
 O código ainda **não foi executado**: corre `npm install` e `npm run build` e envia-me qualquer erro.
 
@@ -119,6 +120,16 @@ O que ainda não existe: lembretes por email (24 horas, 1 hora e 10 minutos ante
 5. **Privacidade:** os outros membros veem só o primeiro nome e a inicial do apelido. Ao eliminar a conta, as publicações, os comentários e as fotografias também desaparecem, e entram na exportação de dados.
 6. **Regras da comunidade:** existe um rascunho em `/regras-da-comunidade`, que tem de ser revisto por um jurista antes do lançamento.
 7. **Ainda não há emails:** quem publica vê o estado na própria publicação. Os avisos por email entram com o Resend.
+
+## Fase 7: eBook
+
+1. **Base de dados:** corre `0006_ebook.sql` no SQL Editor do Supabase.
+2. **Configuração:** `/admin/livro`. Carrega o eBook (PDF ou EPUB), o excerto gratuito (PDF) e a capa, escolhe a meditação exclusiva, põe o link do Kindle e define o preço. O preço do eBook vem sempre deste painel, por isso o valor mostrado é o valor cobrado.
+3. **Compra:** `/livro`. Não precisa de conta. O pagamento é feito no Stripe e a pessoa fica numa página privada (`/livro/acesso/...`) com o download do eBook e a meditação.
+4. **Segurança:** o eBook fica num bucket privado. Cada download é contado (5 por compra) e o link do ficheiro dura um minuto. O acesso expira ao fim de 30 dias, e uma compra reembolsada deixa de funcionar.
+5. **Registo de compras:** `/admin/livro` mostra as compras. O webhook do Stripe que já existe regista a compra e os reembolsos, sem configuração nova.
+6. **Emails:** ainda não há. O recibo vem do Stripe e a página da compra é o acesso. Com o Resend, o link da compra passa a ser enviado por email.
+7. **Registos de venda:** ao eliminar uma conta, os registos de compra do eBook ficam, porque são registos de venda. A política de privacidade deve dizê-lo.
 
 ## Preços
 

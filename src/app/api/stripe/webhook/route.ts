@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { fulfillEbookSession, markEbookRefunded } from "@/lib/book";
 import { getStripe } from "@/lib/stripe";
 import { syncSubscription } from "@/lib/subscription";
 import { getAdminClient } from "@/lib/supabase/admin";
@@ -36,6 +37,10 @@ export async function POST(request: Request) {
           const sub = await stripe.subscriptions.retrieve(session.subscription);
           await syncSubscription(admin, sub, session.client_reference_id);
         }
+        if (session.mode === "payment") {
+          // Compra do eBook: o webhook garante que o registo existe mesmo que a pessoa feche a página.
+          await fulfillEbookSession(admin, session);
+        }
         break;
       }
       case "customer.subscription.created":
@@ -55,6 +60,9 @@ export async function POST(request: Request) {
           entity: "stripe_event",
           entity_id: event.id,
         });
+        if (event.type === "charge.refunded") {
+          await markEbookRefunded(admin, event.data.object as Stripe.Charge);
+        }
         break;
       }
       default:
