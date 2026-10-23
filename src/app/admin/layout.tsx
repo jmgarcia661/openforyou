@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/admin", label: "Início" },
   { href: "/admin/conteudos", label: "Conteúdos" },
   { href: "/admin/semana", label: "Semana grátis" },
+  { href: "/admin/aulas", label: "Aulas em direto" },
   { href: "/", label: "Ver o site" },
 ];
 

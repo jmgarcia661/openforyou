@@ -30,6 +30,9 @@ export function NavLinks({ variant }: Props) {
           <Link href="/praticar" className={base}>
             Praticar
           </Link>
+          <Link href="/calendario" className={base}>
+            Calendário
+          </Link>
           <Link href="/conta" className={base}>
             A minha conta
           </Link>

@@ -113,3 +113,18 @@ export const weeklySchema = z
     path: ["endsOn"],
     message: "A data de fim tem de ser igual ou posterior à de início.",
   });
+
+export const liveEventSchema = z.object({
+  title: z.string().trim().min(1, "Indica o título.").max(120, "O título é demasiado longo."),
+  eventType: z.enum(["yoga_active", "yoga_gentle", "yoga_restorative", "meditation", "community", "workshop", "retreat", "nature"]),
+  description: optionalText(2000),
+  teacher: optionalText(80),
+  level: optionalText(40),
+  materials: optionalText(500),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Indica a data da aula."),
+  time: z.string().regex(/^\d{2}:\d{2}$/, "Indica a hora da aula."),
+  timezone: z.string().min(1).max(64),
+  duration: z.string().regex(/^\d{1,3}$/, "A duração tem de ser um número de minutos."),
+  waitingOpens: z.string().regex(/^\d{1,3}$/, "Indica quantos minutos antes abre a sala de espera."),
+  repeat: z.string().regex(/^\d{1,2}$/, "As repetições têm de ser um número."),
+});

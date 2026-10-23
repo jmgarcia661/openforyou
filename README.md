@@ -13,7 +13,9 @@ Este repositório contém as **Fases 0 e 1**: sistema visual, homepage, páginas
 | 2. Registo, login, conta, RGPD básico | feito (precisa de configuração, ver abaixo) |
 | 3. Stripe (39 € → 59 €) | feito (precisa de configuração, ver abaixo) |
 | 4. Conteúdos, painel de administração, biblioteca para membros | feito (precisa de configuração, ver abaixo) |
-| 5–8. Calendário, Zoom, comunidade, eBook, newsletter, lançamento | por fazer |
+| 5. Calendário, aulas em direto, sala de espera em tempo real | feito (Zoom com links colados à mão) |
+| 5b. Criar reuniões Zoom automaticamente pela API | por fazer |
+| 6–8. Comunidade, eBook, newsletter, lançamento | por fazer |
 
 O código ainda **não foi executado**: corre `npm install` e `npm run build` e envia-me qualquer erro.
 
@@ -94,6 +96,18 @@ values ('O-TEU-UID-AQUI', 'admin');
 4. **Limite de ficheiros:** no plano gratuito do Supabase cada ficheiro tem no máximo **50 MB** e o armazenamento total é de 1 GB. Serve para áudio e vídeos curtos de teste. Para aulas inteiras é preciso o plano Pro (Storage > Settings > Global file size limit) ou passar os vídeos para o Mux, que está previsto.
 5. **Como funciona o acesso:** as regras estão na base de dados. Um conteúdo só aparece a quem o pode ver (gratuito, na semana grátis, ou para membros com subscrição ativa). O link do ficheiro é temporário e só é gerado depois dessa verificação.
 6. **Agendar:** escolhe o estado Publicado e uma data futura em "Publicar a partir de".
+
+## Fase 5: aulas em direto
+
+1. **Base de dados:** no SQL Editor do Supabase, corre `0004_live.sql`. Se aparecer um erro a dizer que a tabela já está na publicação `supabase_realtime`, ignora-o.
+2. **Criar uma aula:** `/admin/aulas` > Criar aula. A hora é a do fuso que escolheres (por omissão Lisboa), não a do teu computador. Podes repetir a aula todas as semanas (as horas mantêm-se certas nas mudanças de hora de verão).
+3. **Zoom (por agora à mão):** cria a reunião no Zoom, abre a aula em `/admin/aulas`, clica em Gerir e cola o link dos participantes e, se quiseres, o do anfitrião. Só administradores os veem.
+4. **No dia:** a sala de espera abre sozinha 15 minutos antes (ou clicas em "Abrir sala de espera"). Quando clicas em **Abrir aula no Zoom**, todas as pessoas na sala recebem a atualização sem recarregar a página e aparece o botão "Entrar agora na aula".
+5. **Controlo:** podes avisar de um atraso, pausar e reabrir entradas, terminar ou cancelar a aula, e ver quantas pessoas estão na sala de espera.
+6. **Gravação:** depois da aula, adiciona-a em Conteúdos como aula de Yoga publicada e associa-a à aula.
+7. **Membros:** veem as aulas em `/calendario` (semana ou mês), na hora do seu fuso, e podem adicionar ao Google Calendar, Apple Calendar ou Outlook.
+
+O que ainda não existe: lembretes por email (24 horas, 1 hora e 10 minutos antes) precisam do Resend e entram na fase de lançamento, e a criação automática das reuniões pela API do Zoom (Fase 5b).
 
 ## Preços
 

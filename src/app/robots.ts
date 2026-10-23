@@ -5,7 +5,7 @@ import { SITE } from "@/lib/site";
 export default function robots(): MetadataRoute.Robots {
   if (!SITE.isProduction) return { rules: { userAgent: "*", disallow: "/" } };
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/conta", "/praticar", "/api/"] },
+    rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/conta", "/praticar", "/calendario", "/aulas", "/api/"] },
     sitemap: `${SITE.url}/sitemap.xml`,
   };
 }

@@ -76,6 +76,9 @@ export default async function AdminHome() {
           <ButtonLink href="/admin/conteudos/novo?tipo=yoga">Adicionar aula</ButtonLink>
           <ButtonLink href="/admin/conteudos/novo?tipo=meditation">Adicionar meditação</ButtonLink>
           <ButtonLink href="/admin/conteudos/novo?tipo=sound">Adicionar som</ButtonLink>
+          <ButtonLink href="/admin/aulas/nova" variant="secondary">
+            Criar aula em direto
+          </ButtonLink>
         </div>
       </section>
     </div>
