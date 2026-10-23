@@ -40,8 +40,9 @@ type WeeklyRow = {
   sound: Row | null;
 };
 
-// As páginas são regeneradas a cada 5 minutos; o link tem de durar mais do que isso.
-const SIGNED_URL_TTL_SECONDS = 60 * 60 * 4;
+// Os conteúdos gratuitos são públicos. As páginas ficam em cache e podem ser servidas horas depois
+// de geradas, por isso o link tem de durar bastante mais do que isso.
+const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 const SELECT_ITEM = "id, kind, title, description, duration_min, media_path, cover_path";
 

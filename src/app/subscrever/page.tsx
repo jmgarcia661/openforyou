@@ -27,6 +27,12 @@ export default async function SubscreverPage() {
   const { data: active } = await supabase.rpc("has_active_subscription");
   if (active) redirect("/conta");
 
+  // O preço de entrada é só para a primeira subscrição.
+  const { data: priorRows } = await supabase.from("subscriptions").select("status").eq("user_id", user.id).limit(10);
+  const firstTime = !((priorRows ?? []) as { status: string }[]).some(
+    (r) => !["incomplete", "incomplete_expired"].includes(r.status),
+  );
+
   const prices = await getPrices();
   const monthly = formatEUR(prices.monthlyCents);
   const next = formatDatePt(addMonths(new Date()));
@@ -34,13 +40,13 @@ export default async function SubscreverPage() {
   return (
     <div className="wrap py-14 md:py-20">
       <div className="mx-auto max-w-lg">
-        <h1 className="text-4xl md:text-5xl">Começar o primeiro mês</h1>
+        <h1 className="text-4xl md:text-5xl">{firstTime ? "Começar o primeiro mês" : "Voltar a subscrever"}</h1>
         <p className="mt-3 text-ink-soft">Confirma o que vais pagar, antes de passares ao pagamento seguro.</p>
 
         <dl className="mt-8 divide-y divide-ink/15 border-y border-ink/15">
           <div className="flex items-baseline justify-between gap-6 py-4">
             <dt>Hoje</dt>
-            <dd className="font-display text-3xl">{formatEUR(prices.firstMonthCents)}</dd>
+            <dd className="font-display text-3xl">{formatEUR(firstTime ? prices.firstMonthCents : prices.monthlyCents)}</dd>
           </div>
           <div className="flex items-baseline justify-between gap-6 py-4">
             <dt>Próxima renovação, a {next}</dt>

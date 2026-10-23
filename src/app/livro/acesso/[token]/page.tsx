@@ -81,7 +81,14 @@ export default async function AcessoPage({ params, searchParams }: Props) {
         </p>
         {remaining > 0 && (
           <div className="mt-5">
-            <ButtonLink href={`/livro/download/${token}`}>Descarregar o eBook</ButtonLink>
+            {/* Ligação normal e não <Link>: o <Link> pré-carrega a página e gastaria um download sem ninguém clicar. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a
+              href={`/livro/download/${token}`}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-clay px-6 font-medium text-white transition-colors hover:bg-clay-dark"
+            >
+              Descarregar o eBook
+            </a>
           </div>
         )}
       </section>

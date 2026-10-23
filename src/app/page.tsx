@@ -1,11 +1,12 @@
+import Image from "next/image";
 import { ButtonLink } from "@/components/ButtonLink";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { Photo } from "@/components/Photo";
 import { Pricing } from "@/components/Pricing";
 import { HideForMembers } from "@/components/ViewerGate";
 import { WeeklyCards } from "@/components/WeeklyCards";
+import { getBook } from "@/lib/book";
 import { formatEUR, getPrices } from "@/lib/pricing";
-import { SITE } from "@/lib/site";
 import { getWeeklyFree } from "@/lib/weekly";
 
 export const revalidate = 300;
@@ -17,7 +18,7 @@ const PATHS = [
 ];
 
 export default async function HomePage() {
-  const [weekly, prices] = await Promise.all([getWeeklyFree(), getPrices()]);
+  const [weekly, prices, book] = await Promise.all([getWeeklyFree(), getPrices(), getBook()]);
 
   return (
     <>
@@ -111,12 +112,18 @@ export default async function HomePage() {
       {/* 4.6 Livro */}
       <section aria-labelledby="book-title" className="bg-sand py-20">
         <div className="wrap grid items-center gap-12 md:grid-cols-[1fr_1.3fr]">
-          <Photo
-            src="/images/livro-capa.jpg"
-            alt="Capa do livro Quem Sou Eu?"
-            sizes="(min-width: 768px) 30vw, 70vw"
-            className="mx-auto aspect-[2/3] w-full max-w-xs rounded-md shadow-xl"
-          />
+          {book.coverUrl ? (
+            <div className="relative mx-auto aspect-[2/3] w-full max-w-xs overflow-hidden rounded-md shadow-xl">
+              <Image src={book.coverUrl} alt="Capa do livro Quem Sou Eu?" fill unoptimized className="object-cover" />
+            </div>
+          ) : (
+            <Photo
+              src="/images/livro-capa.jpg"
+              alt="Capa do livro Quem Sou Eu?"
+              sizes="(min-width: 768px) 30vw, 70vw"
+              className="mx-auto aspect-[2/3] w-full max-w-xs rounded-md shadow-xl"
+            />
+          )}
           <div>
             <h2 id="book-title" className="text-5xl md:text-6xl">
               Quem Sou Eu?
@@ -131,8 +138,8 @@ export default async function HomePage() {
                 Ler um capítulo grátis
               </ButtonLink>
               <ButtonLink href="/livro#comprar">Comprar o eBook — {formatEUR(prices.ebookCents)}</ButtonLink>
-              {SITE.kindleUrl && (
-                <ButtonLink href={SITE.kindleUrl} external variant="quiet" className="self-center">
+              {book.kindleUrl && (
+                <ButtonLink href={book.kindleUrl} external variant="quiet" className="self-center">
                   Ver no Kindle
                 </ButtonLink>
               )}

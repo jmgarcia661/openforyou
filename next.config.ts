@@ -15,6 +15,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // O componente Photo verifica se a fotografia existe: garante que /public/images viaja com o site.
+  outputFileTracingIncludes: { "/**": ["./public/images/**/*"] },
   images: {
     remotePatterns: supabaseHost
       ? [{ protocol: "https", hostname: supabaseHost }]

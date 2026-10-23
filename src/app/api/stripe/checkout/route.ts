@@ -37,39 +37,41 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Já tens acesso completo." }, { status: 409 });
   }
 
+  // Quem já teve uma subscrição não volta a ter o desconto do primeiro mês.
+  const { data: priorRows } = await supabase
+    .from("subscriptions")
+    .select("stripe_customer_id, status")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false })
+    .limit(10);
+  const prior = (priorRows ?? []) as { stripe_customer_id: string; status: string }[];
+  const customerId: string | null = prior[0]?.stripe_customer_id ?? null;
+  const firstTime = !prior.some((r) => !["incomplete", "incomplete_expired"].includes(r.status));
+
   // Segurança: o que mostramos ao cliente tem de ser igual ao que o Stripe vai cobrar.
   const [prices, price, coupon] = await Promise.all([
     getPrices(),
     stripe.prices.retrieve(priceId),
-    stripe.coupons.retrieve(couponId),
+    firstTime ? stripe.coupons.retrieve(couponId) : Promise.resolve(null),
   ]);
   const monthly = price.unit_amount;
-  const off = coupon.amount_off;
-  const consistent =
-    monthly === prices.monthlyCents &&
-    price.currency === "eur" &&
-    price.recurring?.interval === "month" &&
-    off != null &&
-    monthly != null &&
-    monthly - off === prices.firstMonthCents &&
-    coupon.duration === "once";
-  if (!consistent) {
+  const baseOk =
+    monthly === prices.monthlyCents && price.currency === "eur" && price.recurring?.interval === "month";
+  const couponOk =
+    !firstTime ||
+    (coupon !== null &&
+      coupon.amount_off != null &&
+      monthly != null &&
+      monthly - coupon.amount_off === prices.firstMonthCents &&
+      coupon.duration === "once");
+  if (!baseOk || !couponOk) {
     console.error("stripe: preços do Stripe não coincidem com os do site");
     return NextResponse.json({ error: "Não foi possível iniciar o pagamento. Contacta-nos." }, { status: 500 });
   }
 
-  const { data: previous } = await supabase
-    .from("subscriptions")
-    .select("stripe_customer_id")
-    .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  const customerId: string | null = previous?.stripe_customer_id ?? null;
-
   const next = formatDatePt(addMonths(new Date()));
   const summary =
-    `Hoje pagas ${formatEUR(prices.firstMonthCents)}. ` +
+    `Hoje pagas ${formatEUR(firstTime ? prices.firstMonthCents : prices.monthlyCents)}. ` +
     `Próxima renovação: ${formatEUR(prices.monthlyCents)} em ${next}. ` +
     `Depois, ${formatEUR(prices.monthlyCents)}/mês até cancelares. Podes cancelar a qualquer momento.`;
 
@@ -78,7 +80,7 @@ export async function POST(request: Request) {
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    discounts: [{ coupon: couponId }],
+    ...(firstTime ? { discounts: [{ coupon: couponId }] } : {}),
     ...(customerId
       ? { customer: customerId, customer_update: { address: "auto" as const } }
       : { customer_email: user.email ?? undefined }),

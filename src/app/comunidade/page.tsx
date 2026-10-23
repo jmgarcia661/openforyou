@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Composer } from "@/components/community/Composer";
 import { CommentForm } from "@/components/community/CommentForm";
+import { DeletePost } from "@/components/community/DeletePost";
 import { EditPost } from "@/components/community/EditPost";
 import { ReactButton } from "@/components/community/ReactButton";
 import { ReportButton } from "@/components/community/ReportButton";
@@ -154,14 +155,7 @@ export default async function ComunidadePage() {
                 <div className="mt-5 flex flex-wrap items-center gap-2">
                   {post.status === "published" && <ReactButton postId={post.id} userId={user.id} count={count} reacted={reacted} />}
                   {own && <EditPost postId={post.id} body={post.body} />}
-                  {own && (
-                    <RowAction
-                      label="Eliminar"
-                      tone="danger"
-                      confirm="Eliminar esta publicação?"
-                      ops={[{ table: "community_posts", kind: "delete", match: { id: post.id } }]}
-                    />
-                  )}
+                  {own && <DeletePost postId={post.id} imagePath={post.image_path} />}
                   {!own && post.status === "published" && <ReportButton userId={user.id} postId={post.id} />}
                   {isAdmin && !own && (
                     <RowAction

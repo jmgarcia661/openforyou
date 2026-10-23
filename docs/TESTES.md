@@ -45,6 +45,8 @@ Faz os testes por ordem. Em cada passo, o que deves ver está entre parênteses.
 21. No Stripe, Desenvolvedores > Webhooks. (As entregas aparecem com sucesso, sem falhas.)
 22. Em A minha conta, "Gerir subscrição e faturas". (Abre o portal do Stripe. Cancela a subscrição.) De volta ao site. ("Termina a ... Manténs o acesso até lá.")
 23. Tenta pagar com o cartão `4000 0000 0000 0002`. (O Stripe recusa e não é ativado acesso.)
+23a. Depois de cancelada a subscrição e terminado o período, abre `/subscrever` com a mesma conta. (O título é "Voltar a subscrever" e **Hoje** mostra 59 €, sem o desconto: o preço de 39 € é só para a primeira subscrição.)
+23b. Depois de pagar, confirma que o endereço de regresso é o do teu site (`openforyou.vercel.app`) e não `localhost`.
 
 ## E. Aulas em direto
 
