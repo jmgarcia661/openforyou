@@ -12,6 +12,8 @@ export const config = {
     "/api/conta/:path*",
     "/subscrever",
     "/bem-vindo",
+    "/praticar/:path*",
+    "/admin/:path*",
     "/api/stripe/checkout",
     "/api/stripe/portal",
   ],

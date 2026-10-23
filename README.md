@@ -12,7 +12,8 @@ Este repositório contém as **Fases 0 e 1**: sistema visual, homepage, páginas
 | 1. Homepage, "Esta semana", newsletter | feito |
 | 2. Registo, login, conta, RGPD básico | feito (precisa de configuração, ver abaixo) |
 | 3. Stripe (39 € → 59 €) | feito (precisa de configuração, ver abaixo) |
-| 4–8. Biblioteca, calendário, Zoom, comunidade, eBook, admin | por fazer |
+| 4. Conteúdos, painel de administração, biblioteca para membros | feito (precisa de configuração, ver abaixo) |
+| 5–8. Calendário, Zoom, comunidade, eBook, newsletter, lançamento | por fazer |
 
 O código ainda **não foi executado**: corre `npm install` e `npm run build` e envia-me qualquer erro.
 
@@ -78,6 +79,21 @@ O site recusa-se a abrir o pagamento se o preço e o cupão do Stripe não derem
 - **Texto legal do checkout:** a caixa sobre o direito de livre resolução de 14 dias deve ser revista por um jurista.
 - **Pagamento falhado:** com a regra atual, o acesso fica suspenso quando o Stripe marca a subscrição como `past_due`. Se quiseres um período de tolerância, diz-me.
 - **Reembolsos:** ficam registados em `audit_log`. O acesso só termina se cancelares a subscrição.
+
+## Fase 4: conteúdos e painel de administração
+
+1. **Base de dados:** no SQL Editor do Supabase, corre `0003_content.sql`.
+2. **Tornar-te administrador:** o teu utilizador tem de estar na tabela de papéis. Em Authentication > Users copia o teu UID e corre:
+
+```sql
+insert into public.user_roles (user_id, role)
+values ('O-TEU-UID-AQUI', 'admin');
+```
+
+3. **Painel:** abre `/admin`. Aí podes adicionar aulas, meditações e sons (com ficheiro e capa), gerir a **semana grátis** e ver os números. Os membros veem a biblioteca em `/praticar`.
+4. **Limite de ficheiros:** no plano gratuito do Supabase cada ficheiro tem no máximo **50 MB** e o armazenamento total é de 1 GB. Serve para áudio e vídeos curtos de teste. Para aulas inteiras é preciso o plano Pro (Storage > Settings > Global file size limit) ou passar os vídeos para o Mux, que está previsto.
+5. **Como funciona o acesso:** as regras estão na base de dados. Um conteúdo só aparece a quem o pode ver (gratuito, na semana grátis, ou para membros com subscrição ativa). O link do ficheiro é temporário e só é gerado depois dessa verificação.
+6. **Agendar:** escolhe o estado Publicado e uma data futura em "Publicar a partir de".
 
 ## Preços
 

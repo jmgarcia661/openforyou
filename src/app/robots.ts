@@ -4,5 +4,8 @@ import { SITE } from "@/lib/site";
 // Staging e previews nunca devem aparecer em motores de pesquisa.
 export default function robots(): MetadataRoute.Robots {
   if (!SITE.isProduction) return { rules: { userAgent: "*", disallow: "/" } };
-  return { rules: { userAgent: "*", allow: "/" }, sitemap: `${SITE.url}/sitemap.xml` };
+  return {
+    rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/conta", "/praticar", "/api/"] },
+    sitemap: `${SITE.url}/sitemap.xml`,
+  };
 }

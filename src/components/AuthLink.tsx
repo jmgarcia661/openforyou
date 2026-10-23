@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getBrowserClient } from "@/lib/supabase/browser";
 
-/** Mostra "Entrar" ou "A minha conta" sem tornar as páginas públicas dinâmicas. */
+/** Mostra "Entrar" ou "Praticar" e "A minha conta", sem tornar as páginas públicas dinâmicas. */
 export function AuthLink({ className = "" }: { className?: string }) {
   const [signedIn, setSignedIn] = useState(false);
 
@@ -16,9 +16,22 @@ export function AuthLink({ className = "" }: { className?: string }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
+  if (!signedIn) {
+    return (
+      <Link href="/entrar" className={className}>
+        Entrar
+      </Link>
+    );
+  }
+
   return (
-    <Link href={signedIn ? "/conta" : "/entrar"} className={className}>
-      {signedIn ? "A minha conta" : "Entrar"}
-    </Link>
+    <>
+      <Link href="/praticar" className={className}>
+        Praticar
+      </Link>
+      <Link href="/conta" className={className}>
+        A minha conta
+      </Link>
+    </>
   );
 }

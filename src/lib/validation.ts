@@ -74,3 +74,42 @@ export const checkoutSchema = z.object({
   terms: z.literal(true),
   immediate: z.literal(true),
 });
+
+const optionalText = (max: number) => z.string().trim().max(max, "Texto demasiado longo.").optional();
+
+export const contentSchema = z.object({
+  kind: z.enum(["yoga", "meditation", "sound"]),
+  title: z.string().trim().min(1, "Indica o título.").max(120, "O título é demasiado longo."),
+  description: optionalText(2000),
+  duration: z
+    .string()
+    .trim()
+    .regex(/^\d{0,4}$/, "A duração tem de ser um número de minutos.")
+    .optional(),
+  teacher: optionalText(80),
+  level: optionalText(40),
+  intensity: optionalText(40),
+  goal: optionalText(80),
+  materials: optionalText(500),
+  transcript: optionalText(20000),
+  access: z.enum(["free", "premium"]),
+  status: z.enum(["draft", "review", "published", "archived"]),
+  publishAt: z.string().trim().optional(),
+});
+
+const dateField = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Indica uma data válida.");
+
+export const weeklySchema = z
+  .object({
+    startsOn: dateField,
+    endsOn: dateField,
+    theme: optionalText(120),
+    reflection: optionalText(1000),
+    yogaId: z.string().optional(),
+    meditationId: z.string().optional(),
+    soundId: z.string().optional(),
+  })
+  .refine((v) => v.endsOn >= v.startsOn, {
+    path: ["endsOn"],
+    message: "A data de fim tem de ser igual ou posterior à de início.",
+  });
