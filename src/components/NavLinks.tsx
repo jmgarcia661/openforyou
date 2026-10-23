@@ -33,6 +33,9 @@ export function NavLinks({ variant }: Props) {
           <Link href="/calendario" className={base}>
             Calendário
           </Link>
+          <Link href="/comunidade" className={base}>
+            Comunidade
+          </Link>
           <Link href="/conta" className={base}>
             A minha conta
           </Link>

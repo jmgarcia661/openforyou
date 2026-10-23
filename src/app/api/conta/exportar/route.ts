@@ -22,6 +22,11 @@ export async function GET() {
       .eq("user_id", user.id),
   ]);
 
+  const [{ data: posts }, { data: comments }] = await Promise.all([
+    supabase.from("community_posts").select("id, body, status, theme, created_at").eq("author_id", user.id),
+    supabase.from("community_comments").select("id, post_id, body, created_at").eq("author_id", user.id),
+  ]);
+
   let newsletter: unknown = null;
   const admin = getAdminClient();
   if (admin && user.email) {
@@ -37,6 +42,7 @@ export async function GET() {
     account: { id: user.id, email: user.email, createdAt: user.created_at },
     profile,
     subscriptions,
+    community: { posts, comments },
     newsletter,
   };
 

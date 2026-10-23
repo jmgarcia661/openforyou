@@ -45,6 +45,12 @@ export async function POST(request: Request) {
     }
   }
 
+  // Apagar as fotografias que a pessoa partilhou na comunidade.
+  const { data: files } = await admin.storage.from("community").list(user.id, { limit: 1000 });
+  if (files && files.length > 0) {
+    await admin.storage.from("community").remove(files.map((f) => `${user.id}/${f.name}`));
+  }
+
   const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) {
     console.error("delete user failed", error.message);

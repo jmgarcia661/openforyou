@@ -15,6 +15,7 @@ export const config = {
     "/praticar/:path*",
     "/admin/:path*",
     "/calendario",
+    "/comunidade",
     "/aulas/:path*",
     "/api/live/:path*",
     "/api/calendario/:path*",

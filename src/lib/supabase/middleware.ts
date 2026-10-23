@@ -29,7 +29,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname, search } = request.nextUrl;
-  const protectedPaths = ["/conta", "/subscrever", "/bem-vindo", "/praticar", "/admin", "/calendario", "/aulas"];
+  const protectedPaths = ["/conta", "/subscrever", "/bem-vindo", "/praticar", "/admin", "/calendario", "/aulas", "/comunidade"];
   if (!user && protectedPaths.some((path) => pathname.startsWith(path))) {
     const redirect = request.nextUrl.clone();
     redirect.pathname = "/entrar";

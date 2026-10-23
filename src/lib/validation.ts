@@ -128,3 +128,15 @@ export const liveEventSchema = z.object({
   waitingOpens: z.string().regex(/^\d{1,3}$/, "Indica quantos minutos antes abre a sala de espera."),
   repeat: z.string().regex(/^\d{1,2}$/, "As repetições têm de ser um número."),
 });
+
+export const communityPostSchema = z.object({
+  body: z.string().trim().min(1, "Escreve alguma coisa.").max(2000, "A mensagem é demasiado longa (máximo 2000 caracteres)."),
+});
+
+export const communityCommentSchema = z.object({
+  body: z.string().trim().min(1, "Escreve um comentário.").max(1000, "O comentário é demasiado longo (máximo 1000 caracteres)."),
+});
+
+export const reportSchema = z.object({
+  reason: z.string().trim().min(1, "Diz-nos porque estás a denunciar.").max(500, "O texto é demasiado longo."),
+});

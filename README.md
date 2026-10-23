@@ -15,7 +15,8 @@ Este repositório contém as **Fases 0 e 1**: sistema visual, homepage, páginas
 | 4. Conteúdos, painel de administração, biblioteca para membros | feito (precisa de configuração, ver abaixo) |
 | 5. Calendário, aulas em direto, sala de espera em tempo real | feito (Zoom com links colados à mão) |
 | 5b. Criar reuniões Zoom automaticamente pela API | por fazer |
-| 6–8. Comunidade, eBook, newsletter, lançamento | por fazer |
+| 6. Comunidade privada e moderada | feito (precisa da migração 0005) |
+| 7–8. eBook, newsletter, lançamento | por fazer |
 
 O código ainda **não foi executado**: corre `npm install` e `npm run build` e envia-me qualquer erro.
 
@@ -108,6 +109,16 @@ values ('O-TEU-UID-AQUI', 'admin');
 7. **Membros:** veem as aulas em `/calendario` (semana ou mês), na hora do seu fuso, e podem adicionar ao Google Calendar, Apple Calendar ou Outlook.
 
 O que ainda não existe: lembretes por email (24 horas, 1 hora e 10 minutos antes) precisam do Resend e entram na fase de lançamento, e a criação automática das reuniões pela API do Zoom (Fase 5b).
+
+## Fase 6: comunidade
+
+1. **Base de dados:** no SQL Editor do Supabase, corre `0005_community.sql`.
+2. **Membros:** `/comunidade`. Escrevem, comentam, dão um coração, editam e eliminam o que é seu e podem denunciar. A primeira vez aceitam as regras, e cada fotografia exige a confirmação de que podem partilhá-la.
+3. **Moderação:** `/admin/comunidade`. Por omissão as publicações aparecem logo e tu moderas depois (retirar, fixar, fechar comentários, suspender 7 dias, bloquear, tratar denúncias). Há um interruptor para passar a **aprovar antes**: nesse modo cada publicação nova fica na fila até a aprovares.
+4. **Fotografias:** vão para um bucket privado e só são mostradas a membros, com links temporários. Máximo 5 MB, JPG, PNG ou WebP. Usam o mesmo armazenamento (1 GB no plano gratuito).
+5. **Privacidade:** os outros membros veem só o primeiro nome e a inicial do apelido. Ao eliminar a conta, as publicações, os comentários e as fotografias também desaparecem, e entram na exportação de dados.
+6. **Regras da comunidade:** existe um rascunho em `/regras-da-comunidade`, que tem de ser revisto por um jurista antes do lançamento.
+7. **Ainda não há emails:** quem publica vê o estado na própria publicação. Os avisos por email entram com o Resend.
 
 ## Preços
 
